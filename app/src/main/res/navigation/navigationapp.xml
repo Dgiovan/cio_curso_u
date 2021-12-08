@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigationapp"
+    app:startDestination="@id/homemovies">
+
+    <fragment
+        android:id="@+id/homemovies"
+        android:name="com.gio.cursoudemi.firstApp.ui.moviehome.Homemovies"
+        android:label="fragment_homemovies"
+        tools:layout="@layout/fragment_homemovies" >
+        <action
+            android:id="@+id/action_homemovies_to_detailmovie"
+            app:destination="@id/detailmovie" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailmovie"
+        android:name="com.gio.cursoudemi.firstApp.ui.moviedetail.detailMovie"
+        android:label="fragment_detailmovie"
+        tools:layout="@layout/fragment_detailmovie" >
+        <argument
+            android:name="posterImageUrl"
+            app:argType="string" />
+        <argument
+            android:name="backgoundImageUrl"
+            app:argType="string" />
+        <argument
+            android:name="voteAverage"
+            app:argType="float" />
+        <argument
+            android:name="voteCount"
+            app:argType="integer" />
+        <argument
+            android:name="overview"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="language"
+            app:argType="string" />
+        <argument
+            android:name="relaseData"
+            app:argType="string" />
+    </fragment>
+</navigation>

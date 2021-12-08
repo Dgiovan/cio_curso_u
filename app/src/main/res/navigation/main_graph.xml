@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/home_Navigation">
+
+    <fragment
+        android:id="@+id/home_Navigation"
+        android:name="com.gio.cursoudemi.navigation_componenets.Home_Navigation"
+        android:label="fragment_home__navigation"
+        tools:layout="@layout/fragment_home__navigation" >
+        <action
+            android:id="@+id/action_home_Navigation_to_seconNavigation"
+            app:destination="@id/seconNavigation"
+            app:enterAnim="@anim/slide_in_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/seconNavigation"
+        android:name="com.gio.cursoudemi.navigation_componenets.SeconNavigation"
+        android:label="fragment_secon_navigation"
+        tools:layout="@layout/fragment_secon_navigation" >
+        <argument
+            android:name="nombreg"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="NO_NAME" />
+        <argument
+            android:name="edadg"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+    <include app:graph="@navigation/product_graph" />
+</navigation>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/product_graph"
+    app:startDestination="@id/productFragment">
+
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.gio.cursoudemi.navigation_componenets.ProductFragment"
+        android:label="fragment_product"
+        tools:layout="@layout/fragment_product" />
+    <fragment
+        android:id="@+id/detailProduct"
+        android:name="com.gio.cursoudemi.navigation_componenets.DetailProduct"
+        android:label="fragment_detail_product"
+        tools:layout="@layout/fragment_detail_product">
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="curso://detail" />
+    </fragment>
+</navigation>

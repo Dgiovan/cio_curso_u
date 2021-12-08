@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "399804096003",
+    "project_id": "blog-app-cu",
+    "storage_bucket": "blog-app-cu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:399804096003:android:c7a0dc07fe18d736ef3836",
+        "android_client_info": {
+          "package_name": "com.gio.cursoudemi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "399804096003-jo4vrr7a0t4albpc5hpkd5r45vhdaojv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gio.cursoudemi",
+            "certificate_hash": "35c3ab470ced94e92d5c6dddfa81b4acc7698bb8"
+          }
+        },
+        {
+          "client_id": "399804096003-45fjtbkkj5qni0fl7n5ubl9b3ecjfc85.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEKJKvQqd36D4LbMT9Nfj-uDVMOeGGW2k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "399804096003-45fjtbkkj5qni0fl7n5ubl9b3ecjfc85.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
