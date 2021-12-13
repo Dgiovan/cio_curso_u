@@ -109,6 +109,15 @@ class homeScreenFragment : Fragment(R.layout.fragment_home_screen) , OnPostClick
 }
 
     override fun onLikedButtonClick(post: Post, liked: Boolean) {
-        TODO("Not yet implemented")
+        viewModel.registerLikeButtonState(post.id,liked).observe(viewLifecycleOwner)
+        {
+            when(it){
+                is Resource.Loading -> {}
+                is Resource.Success -> {}
+                is Resource.Failure -> {
+                    Toast.makeText(requireContext(), "${it.exepcion}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

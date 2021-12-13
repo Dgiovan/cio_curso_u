@@ -14,10 +14,10 @@ import java.lang.Exception
 
 class HomeScreenViewModel(private val repo : homeScreenRepo) : ViewModel() {
 
-    fun fetchLatestPost() = liveData(Dispatchers.IO){
+    fun fetchLatestPost() = liveData(viewModelScope.coroutineContext + Dispatchers.Main ){
             emit(Resource.Loading())
         try {
-            emit(Resource.Success(repo.getLastestPost()).data)
+            emit(Resource.Success(repo.getLatestPost()).data)
         }catch (e: Exception){
             emit(Resource.Failure(e))
         }
@@ -25,7 +25,7 @@ class HomeScreenViewModel(private val repo : homeScreenRepo) : ViewModel() {
 
     val latestPost : StateFlow<Resource<List<Post>>> = flow {
         kotlin.runCatching {
-            repo.getLastestPost()
+            repo.getLatestPost()
         }
             .onSuccess {
                 emit(it)}
@@ -38,12 +38,26 @@ class HomeScreenViewModel(private val repo : homeScreenRepo) : ViewModel() {
         initialValue = Resource.Loading()
     )
 
+
+    fun registerLikeButtonState(postId: String, liked : Boolean)
+    = liveData(viewModelScope.coroutineContext+Dispatchers.Main)
+    {
+        emit(Resource.Loading())
+        kotlin.runCatching {
+        repo.registerLikeButtonState(postId,liked)
+        }.onSuccess {
+         emit(Resource.Success(Unit))
+        }.onFailure {
+         emit(Resource.Failure(Exception(it.message)))
+        }
+    }
+
     /**Los state flow deben tener un valor por defecto inicializado*/
     //without Flow coroutine builder
     private val posts = MutableStateFlow<Resource<List<Post>>>(Resource.Loading())
     fun fetchPostsFromMutable() = viewModelScope.launch {
         kotlin.runCatching {
-            repo.getLastestPost()
+            repo.getLatestPost()
         }
             .onSuccess {
                posts.value  = it}
