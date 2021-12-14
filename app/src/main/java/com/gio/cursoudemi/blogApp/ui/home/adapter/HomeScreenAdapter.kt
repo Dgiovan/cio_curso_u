@@ -93,7 +93,7 @@ class HomeScreenAdapter(private val postList: List<Post>,private val onPostClick
                 if(post.liked) post.apply { liked = false } else post.apply { liked = true }
 
                 tintHeartIcon(post)
-
+/////
                 postClickListener?.onLikedButtonClick(post,post.liked)
             }
         }
