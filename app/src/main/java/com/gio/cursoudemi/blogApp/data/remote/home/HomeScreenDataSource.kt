@@ -1,5 +1,6 @@
 package com.gio.cursoudemi.blogApp.data.remote.home
 
+import android.util.Log
 import com.gio.cursoudemi.blogApp.core.Resource
 import com.gio.cursoudemi.blogApp.data.models.Post
 import com.google.firebase.auth.FirebaseAuth
@@ -12,63 +13,121 @@ import java.lang.Exception
 class HomeScreenDataSource {
 
     /**con live data */
+/**    suspend fun getLatestPost(): Result<List<Post>> {
+
+        val postList = mutableListOf<Post>()
+
+        withContext(Dispatchers.IO) {
+            val querySnapshot = FirebaseFirestore.getInstance().collection("post")
+                .orderBy("created_at", Query.Direction.DESCENDING).get().await()
+
+            for (post in querySnapshot.documents) {
+                post.toObject(Post::class.java)?.let { fbPost ->
+
+                    val isLiked = FirebaseAuth.getInstance().currentUser?.let { safeUser ->
+                        isPostLiked(post.id, safeUser.uid)
+                    }
+
+                    fbPost.apply {
+                        created_at = post.getTimestamp(
+                            "created_at",
+                            DocumentSnapshot.ServerTimestampBehavior.ESTIMATE
+                        )?.toDate()
+                        id = post.id
+
+                        if(isLiked != null) {
+                            liked = isLiked
+                        }
+                    }
+
+                    postList.add(fbPost)
+                }
+            }
+        }
+        return Resource.Success(postList)
+    }*/
     suspend fun getLatestPost(): Resource<List<Post>>{
 
     val postList = mutableListOf<Post>()
 
     withContext(Dispatchers.IO){
-        val querySnapshot = FirebaseFirestore.getInstance().collection("post").orderBy("created_at",
-            Query.Direction.DESCENDING).get().await()
+        val querySnapshot = FirebaseFirestore.getInstance().collection("post")
+            .orderBy("created_at", Query.Direction.DESCENDING).get().await()
 
         for (post in querySnapshot.documents){
             post.toObject(Post::class.java)?.let { fbPost ->
 
-                fbPost.apply { created_at  = post.getTimestamp("created_at",DocumentSnapshot.ServerTimestampBehavior.ESTIMATE)?.toDate() }
+                val isLiked = FirebaseAuth.getInstance().currentUser?.let { safeUser->
+                    isPostLiked(post.id,safeUser.uid)
+                }
+
+                fbPost.apply {
+                    created_at  = post.getTimestamp(
+                        "created_at",DocumentSnapshot.ServerTimestampBehavior.ESTIMATE
+                    )?.toDate()
+                    id = post.id
+
+                    if (isLiked != null){
+                        liked = isLiked
+                    }
+                }
                 postList.add(fbPost)
             }
+
         }
     }
-
-
 
     return Resource.Success(postList)
     }
 
+    private suspend fun isPostLiked(postId: String, uid: String): Boolean {
+        val post = FirebaseFirestore.getInstance().collection("postsLikes").document(postId).get().await()
+        if(!post.exists()) {
+            return false
+        }
+        val likeArray: List<String> = post.get("likes") as List<String>
+        return likeArray.contains(uid)
+    }
     fun registerLikeButtonState(postId: String, liked: Boolean) {
+
         val increment = FieldValue.increment(1)
         val decrement = FieldValue.increment(-1)
-
+        val database = FirebaseFirestore.getInstance()
         val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val postRef =  FirebaseFirestore.getInstance().collection("post").document(postId)
-        val postLikesRef =  FirebaseFirestore.getInstance().collection("postsLikes").document(postId)
+        val postRef = database.collection("post").document(postId)
 
-        val dataBase = FirebaseFirestore.getInstance()
+        val postsLikesRef = database.collection("postsLikes").document(postId)
 
-        dataBase.runTransaction{ transaction ->
-            val snapshot  =transaction.get(postRef)
-            val likedCount = snapshot.getLong("likes")
 
-            if (likedCount != null) {
-                if (likedCount >= 0) {
-                    if (liked){
-                        if (transaction.get(postLikesRef).exists()){
-                            transaction.update(postLikesRef,"likes",FieldValue.arrayUnion(uid))
-                        }else{
-                            transaction.set(postLikesRef, hashMapOf("likes" to arrayListOf(uid)), SetOptions.merge())
+
+
+        database.runTransaction { transaction ->
+            val snapshot = transaction.get(postRef)
+            val likeCount = snapshot.getLong("likes")
+            if (likeCount != null) {
+                if (likeCount >= 0) {
+                    if (liked) {
+                        if (transaction.get(postsLikesRef).exists()) {
+                            transaction.update(postsLikesRef, "likes", FieldValue.arrayUnion(uid))
+                        } else {
+                            transaction.set(
+                                postsLikesRef,
+                                hashMapOf("likes" to arrayListOf(uid)),
+                                SetOptions.merge()
+                            )
                         }
-                        transaction.update(postRef,"likes",increment)
-                    }else{
-                        transaction.update(postRef,"likes",decrement)
-                        transaction.update(postLikesRef,"likes", FieldValue.arrayRemove(uid))
+
+                        transaction.update(postRef, "likes", increment)
+                    } else {
+                        transaction.update(postRef, "likes", decrement)
+                        transaction.update(postsLikesRef, "likes", FieldValue.arrayRemove(uid))
                     }
                 }
             }
-
         }.addOnFailureListener {
-           throw Exception(it.message)
+            Resource.Failure( Exception(it.message))
         }
     }
-
     /**con flow*/
 /*
     @ExperimentalCoroutinesApi

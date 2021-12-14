@@ -16,11 +16,18 @@ class HomeScreenViewModel(private val repo : homeScreenRepo) : ViewModel() {
 
     fun fetchLatestPost() = liveData(viewModelScope.coroutineContext + Dispatchers.Main ){
             emit(Resource.Loading())
-        try {
-            emit(Resource.Success(repo.getLatestPost()).data)
+        kotlin.runCatching {
+
+            repo.getLatestPost()
+        }.onSuccess {postList ->
+            emit(postList)
+        }.onFailure { throwable ->
+            emit(Resource.Failure(Exception(throwable.message)))}
+     /*   try {
+            emit(Resource.Success)
         }catch (e: Exception){
             emit(Resource.Failure(e))
-        }
+        }*/
     }
 
     val latestPost : StateFlow<Resource<List<Post>>> = flow {
@@ -77,7 +84,7 @@ class HomeScreenViewModel(private val repo : homeScreenRepo) : ViewModel() {
             flowList.collect { emit(it)  }
         }.onFailure { throwable ->
             emit(Resource.Failure(Exception(throwable.message)))
-        }
+        }https://sketch.io/sketchpad/
     }*/
 }
 

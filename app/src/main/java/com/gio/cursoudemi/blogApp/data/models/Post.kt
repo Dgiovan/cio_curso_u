@@ -5,15 +5,14 @@ import com.google.firebase.firestore.ServerTimestamp
 import java.util.*
 
 
-data class Post(
+data class Post(@Exclude @JvmField
+                var id: String="",
                 @ServerTimestamp
                 var created_at: Date? =null,
                 val post_image: String = "",
                 val post_description : String = "",
                 val poster: Poster? = null,
                 val likes : Long = 0,
-                @Exclude @JvmField
-                val id: String="",
                 @Exclude @JvmField
                 var liked: Boolean=false)
 

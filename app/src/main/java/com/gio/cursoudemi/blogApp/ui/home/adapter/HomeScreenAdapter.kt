@@ -44,7 +44,7 @@ class HomeScreenAdapter(private val postList: List<Post>,private val onPostClick
             setupPostDescription(item)
             tintHeartIcon(item)
             setupLikeCount(item)
-
+            setLikeClickAction(item)
 
         }
 
@@ -71,26 +71,26 @@ class HomeScreenAdapter(private val postList: List<Post>,private val onPostClick
             }
         }
         private fun tintHeartIcon(post : Post){
-            if (post.liked){
-                binding.likeButton.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_baseline_favorite_24))
-                binding.likeButton.setColorFilter(ContextCompat.getColor(context,R.color.red_like))
-            }else{
+            if (!post.liked){
                 binding.likeButton.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_baseline_favorite_border_24))
                 binding.likeButton.setColorFilter(ContextCompat.getColor(context,R.color.black))
+            }else{
+                binding.likeButton.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_baseline_favorite_24))
+                binding.likeButton.setColorFilter(ContextCompat.getColor(context,R.color.red_like))
             }
         }
         private fun setupLikeCount(post : Post) {
             if (post.likes>0){
-                binding.likeCount.hide()
+                binding.likeCount.show()
                 binding.likeCount.text = "${post.likes} likes"
             }else{
-                binding.likeCount.show()
+                binding.likeCount.hide()
             }
 
         }
         private fun setLikeClickAction(post : Post){
             binding.likeButton.setOnClickListener {
-                if (post.liked) post.apply { liked = true } else post.apply { liked = false }
+                if(post.liked) post.apply { liked = false } else post.apply { liked = true }
 
                 tintHeartIcon(post)
 
